@@ -1,0 +1,1106 @@
+{
+  "announcements": [
+    {
+      "url": "/api/announcements",
+      "method": "GET",
+      "description": "Get all announcements",
+      "queryParams": ["page", "limit", "priority"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/announcements/:id",
+      "method": "GET",
+      "description": "Get announcement by ID",
+      "pathParams": ["id"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/announcements",
+      "method": "POST",
+      "description": "Create new announcement",
+      "requestBody": {
+        "title": "string (required)",
+        "content": "string (required)",
+        "priority": "string (optional, enum: low/medium/high/urgent)",
+        "validUntil": "string (optional, ISO date)"
+      }
+    },
+    {
+      "url": "/api/announcements/:id",
+      "method": "PUT",
+      "description": "Update announcement",
+      "pathParams": ["id"],
+      "requestBody": {
+        "title": "string (optional)",
+        "content": "string (optional)",
+        "priority": "string (optional)",
+        "validUntil": "string (optional)"
+      }
+    },
+    {
+      "url": "/api/announcements/:id",
+      "method": "DELETE",
+      "description": "Delete announcement",
+      "pathParams": ["id"],
+      "requestBody": null
+    }
+  ],
+  "attendance": [
+    {
+      "url": "/api/attendance/mark",
+      "method": "POST",
+      "description": "Mark attendance (checkin/checkout)",
+      "requestBody": {
+        "empId": "string (required)",
+        "type": "string (required, enum: checkin/checkout)"
+      }
+    },
+    {
+      "url": "/api/attendance/daily/:empId",
+      "method": "GET",
+      "description": "Get daily attendance status",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/attendance/history/:empId",
+      "method": "GET",
+      "description": "Get attendance history",
+      "pathParams": ["empId"],
+      "queryParams": ["month", "year"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/attendance/summary/:empId",
+      "method": "GET",
+      "description": "Get monthly attendance summary",
+      "pathParams": ["empId"],
+      "queryParams": ["month", "year"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/attendance/report",
+      "method": "GET",
+      "description": "Get attendance report",
+      "queryParams": ["startDate", "endDate", "empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/attendance/:empId",
+      "method": "PUT",
+      "description": "Update attendance record",
+      "pathParams": ["empId"],
+      "requestBody": {
+        "date": "string (required, date format)",
+        "checkInTime": "string (optional)",
+        "checkOutTime": "string (optional)",
+        "workingHours": "number (optional)"
+      }
+    }
+  ],
+  "documents": [
+    {
+      "url": "/api/documents/:empId",
+      "method": "GET",
+      "description": "Get all documents for employee",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/documents/:empId/:docId",
+      "method": "GET",
+      "description": "Get document by ID",
+      "pathParams": ["empId", "docId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/documents/:empId/download/:docId",
+      "method": "GET",
+      "description": "Download document",
+      "pathParams": ["empId", "docId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/documents/:empId/upload",
+      "method": "POST",
+      "description": "Upload document",
+      "pathParams": ["empId"],
+      "contentType": "multipart/form-data",
+      "formData": {
+        "document": "file (required)",
+        "documentType": "string (required)"
+      }
+    },
+    {
+      "url": "/api/documents/:empId/:docId/metadata",
+      "method": "PUT",
+      "description": "Update document metadata",
+      "pathParams": ["empId", "docId"],
+      "requestBody": {
+        "documentType": "string (optional)",
+        "description": "string (optional)"
+      }
+    },
+    {
+      "url": "/api/documents/:empId/:docId",
+      "method": "DELETE",
+      "description": "Delete document",
+      "pathParams": ["empId", "docId"],
+      "requestBody": null
+    }
+  ],
+  "excuses": [
+    {
+      "url": "/api/excuses/submit",
+      "method": "POST",
+      "description": "Submit excuse request",
+      "contentType": "multipart/form-data (if attachment)",
+      "formData": {
+        "empId": "string (required)",
+        "type": "string (required)",
+        "reason": "string (required)",
+        "excuseDate": "string (required, date)",
+        "duration": "string (optional)",
+        "attachment": "file (optional)"
+      }
+    },
+    {
+      "url": "/api/excuses/history/:empId",
+      "method": "GET",
+      "description": "Get excuse history",
+      "pathParams": ["empId"],
+      "queryParams": ["startDate", "endDate", "status"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/excuses/status/:empId",
+      "method": "GET",
+      "description": "Get excuse status",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/excuses/:excuseId/action",
+      "method": "PUT",
+      "description": "Approve/reject excuse",
+      "pathParams": ["excuseId"],
+      "requestBody": {
+        "action": "string (required, enum: approve/reject)",
+        "remarks": "string (optional)",
+        "managerId": "string (required)"
+      }
+    },
+    {
+      "url": "/api/excuses/pending/:managerId",
+      "method": "GET",
+      "description": "Get pending excuses for manager",
+      "pathParams": ["managerId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/excuses/:excuseId/cancel",
+      "method": "DELETE",
+      "description": "Cancel excuse request",
+      "pathParams": ["excuseId"],
+      "requestBody": {
+        "empId": "string (required)"
+      }
+    },
+    {
+      "url": "/api/excuses/types",
+      "method": "GET",
+      "description": "Get excuse types",
+      "requestBody": null
+    },
+    {
+      "url": "/api/excuses/:excuseId",
+      "method": "GET",
+      "description": "Get excuse by ID",
+      "pathParams": ["excuseId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/excuses/:excuseId/attachment/:attachmentId",
+      "method": "GET",
+      "description": "Download excuse attachment",
+      "pathParams": ["excuseId", "attachmentId"],
+      "requestBody": null
+    }
+  ],
+  "dashboard": [
+    {
+      "url": "/api/dashboard",
+      "method": "GET",
+      "description": "Get general dashboard data",
+      "requestBody": null
+    },
+    {
+      "url": "/api/dashboard/employee/:empId",
+      "method": "GET",
+      "description": "Get employee dashboard",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/dashboard/manager/:managerId",
+      "method": "GET",
+      "description": "Get manager dashboard",
+      "pathParams": ["managerId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/dashboard/attendance-stats",
+      "method": "GET",
+      "description": "Get attendance statistics",
+      "queryParams": ["period", "empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/dashboard/recent-activities",
+      "method": "GET",
+      "description": "Get recent activities",
+      "queryParams": ["limit", "empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/dashboard/pending-approvals/:managerId",
+      "method": "GET",
+      "description": "Get pending approvals for manager",
+      "pathParams": ["managerId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/dashboard/quick-stats/:empId",
+      "method": "GET",
+      "description": "Get quick statistics for employee",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/dashboard/team-overview/:managerId",
+      "method": "GET",
+      "description": "Get team overview for manager",
+      "pathParams": ["managerId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/dashboard/notifications",
+      "method": "GET",
+      "description": "Get notification summary",
+      "queryParams": ["empId", "limit"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/dashboard/refresh",
+      "method": "POST",
+      "description": "Refresh dashboard data",
+      "requestBody": {
+        "empId": "string (optional)",
+        "modules": "array (optional)"
+      }
+    },
+    {
+      "url": "/api/dashboard/preferences/:empId",
+      "method": "PUT",
+      "description": "Update dashboard preferences",
+      "pathParams": ["empId"],
+      "requestBody": {
+        "widgets": "array (optional)",
+        "layout": "object (optional)",
+        "refreshInterval": "number (optional)"
+      }
+    }
+  ],
+  "leave": [
+    {
+      "url": "/api/leave/apply",
+      "method": "POST",
+      "description": "Apply for leave",
+      "requestBody": {
+        "leaveId": "string (optional)",
+        "empId": "string (required)",
+        "fromDate": "string (required, date)",
+        "toDate": "string (required, date)",
+        "type": "string (required)"
+      }
+    },
+    {
+      "url": "/api/leave/balance/:empId",
+      "method": "GET",
+      "description": "Get leave balance",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/leave/history/:empId",
+      "method": "GET",
+      "description": "Get leave history",
+      "pathParams": ["empId"],
+      "queryParams": ["year", "status"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/leave/types",
+      "method": "GET",
+      "description": "Get leave types",
+      "requestBody": null
+    },
+    {
+      "url": "/api/leave/status/:empId",
+      "method": "GET",
+      "description": "Get leave status",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/leave/:leaveId/cancel",
+      "method": "DELETE",
+      "description": "Cancel leave",
+      "pathParams": ["leaveId"],
+      "requestBody": {
+        "empId": "string (required)"
+      }
+    },
+    {
+      "url": "/api/leave/:leaveId/action",
+      "method": "PUT",
+      "description": "Approve/reject leave",
+      "pathParams": ["leaveId"],
+      "requestBody": {
+        "action": "string (required, enum: approve/reject)",
+        "remarks": "string (optional)",
+        "managerId": "string (required)"
+      }
+    },
+    {
+      "url": "/api/leave/pending/:managerId",
+      "method": "GET",
+      "description": "Get pending leaves for manager",
+      "pathParams": ["managerId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/leave/:leaveId",
+      "method": "GET",
+      "description": "Get leave by ID",
+      "pathParams": ["leaveId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/leave/:leaveId",
+      "method": "PUT",
+      "description": "Update leave",
+      "pathParams": ["leaveId"],
+      "requestBody": {
+        "fromDate": "string (optional)",
+        "toDate": "string (optional)",
+        "type": "string (optional)",
+        "reason": "string (optional)"
+      }
+    }
+  ],
+  "manager": [
+    {
+      "url": "/api/manager/:managerId/team",
+      "method": "GET",
+      "description": "Get team members",
+      "pathParams": ["managerId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/manager/bulk-approve",
+      "method": "POST",
+      "description": "Bulk approve requests",
+      "requestBody": {
+        "type": "string (required, enum: leave/excuse/reimbursement)",
+        "ids": "array (required)",
+        "action": "string (required, enum: approve/reject)",
+        "managerId": "string (required)"
+      }
+    },
+    {
+      "url": "/api/manager/:managerId/pending-approvals",
+      "method": "GET",
+      "description": "Get pending approvals",
+      "pathParams": ["managerId"],
+      "queryParams": ["type", "limit"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/manager/:managerId/team/:empId",
+      "method": "GET",
+      "description": "Get team member details",
+      "pathParams": ["managerId", "empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/manager/:managerId/dashboard",
+      "method": "GET",
+      "description": "Get manager dashboard",
+      "pathParams": ["managerId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/manager/:managerId/team/attendance-summary",
+      "method": "GET",
+      "description": "Get team attendance summary",
+      "pathParams": ["managerId"],
+      "queryParams": ["month", "year"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/manager/:managerId/team/search",
+      "method": "GET",
+      "description": "Search team members",
+      "pathParams": ["managerId"],
+      "queryParams": ["query", "department", "role"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/manager/:managerId/assign-task",
+      "method": "POST",
+      "description": "Assign task to team member",
+      "pathParams": ["managerId"],
+      "requestBody": {
+        "empId": "string (required)",
+        "title": "string (required)",
+        "description": "string (optional)",
+        "dueDate": "string (optional, date)"
+      }
+    },
+    {
+      "url": "/api/manager/:managerId/team/:empId",
+      "method": "PUT",
+      "description": "Update team member",
+      "pathParams": ["managerId", "empId"],
+      "requestBody": {
+        "role": "string (optional)",
+        "department": "string (optional)",
+        "manager": "string (optional)"
+      }
+    },
+    {
+      "url": "/api/manager/:managerId/team/performance",
+      "method": "GET",
+      "description": "Get team performance",
+      "pathParams": ["managerId"],
+      "queryParams": ["period", "metric"],
+      "requestBody": null
+    }
+  ],
+  "notifications": [
+    {
+      "url": "/api/notifications/:empId",
+      "method": "GET",
+      "description": "Get notifications for employee",
+      "pathParams": ["empId"],
+      "queryParams": ["page", "limit", "type", "status"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/notifications/:empId/unread",
+      "method": "GET",
+      "description": "Get unread notifications",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/notifications/:notificationId/read",
+      "method": "PUT",
+      "description": "Mark notification as read",
+      "pathParams": ["notificationId"],
+      "requestBody": {
+        "empId": "string (required)"
+      }
+    },
+    {
+      "url": "/api/notifications/:empId/read-all",
+      "method": "PUT",
+      "description": "Mark all notifications as read",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/notifications/:notificationId",
+      "method": "DELETE",
+      "description": "Delete notification",
+      "pathParams": ["notificationId"],
+      "requestBody": {
+        "empId": "string (required)"
+      }
+    },
+    {
+      "url": "/api/notifications",
+      "method": "POST",
+      "description": "Create notification",
+      "requestBody": {
+        "targetEmpId": "string (required)",
+        "senderEmpId": "string (required)",
+        "title": "string (required)",
+        "content": "string (required)",
+        "type": "string (optional)",
+        "priority": "string (optional)",
+        "scheduledFor": "string (optional, ISO date)"
+      }
+    },
+    {
+      "url": "/api/notifications/broadcast",
+      "method": "POST",
+      "description": "Broadcast notification",
+      "requestBody": {
+        "senderEmpId": "string (required)",
+        "title": "string (required)",
+        "content": "string (required)",
+        "type": "string (optional)",
+        "priority": "string (optional)",
+        "targetGroups": "array (optional)",
+        "excludeEmpIds": "array (optional)"
+      }
+    },
+    {
+      "url": "/api/notifications/admin/all",
+      "method": "GET",
+      "description": "Get all notifications (admin)",
+      "queryParams": ["page", "limit", "type", "status", "startDate", "endDate"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/notifications/admin/:notificationId",
+      "method": "DELETE",
+      "description": "Delete notification (admin)",
+      "pathParams": ["notificationId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/notifications/:empId/settings",
+      "method": "GET",
+      "description": "Get notification settings",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/notifications/:empId/settings",
+      "method": "PUT",
+      "description": "Update notification settings",
+      "pathParams": ["empId"],
+      "requestBody": {
+        "emailNotifications": "boolean (optional)",
+        "smsNotifications": "boolean (optional)",
+        "pushNotifications": "boolean (optional)",
+        "categories": "object (optional)"
+      }
+    },
+    {
+      "url": "/api/notifications/details/:notificationId",
+      "method": "GET",
+      "description": "Get notification by ID",
+      "pathParams": ["notificationId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/notifications/:empId/stats",
+      "method": "GET",
+      "description": "Get notification statistics",
+      "pathParams": ["empId"],
+      "queryParams": ["period"],
+      "requestBody": null
+    }
+  ],
+  "payroll": [
+    {
+      "url": "/api/payroll/:empId/payslip",
+      "method": "GET",
+      "description": "Get payslip",
+      "pathParams": ["empId"],
+      "queryParams": ["month", "year"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/payroll/:empId/history",
+      "method": "GET",
+      "description": "Get payslip history",
+      "pathParams": ["empId"],
+      "queryParams": ["year", "limit"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/payroll/:empId/bank-details",
+      "method": "PUT",
+      "description": "Update bank details",
+      "pathParams": ["empId"],
+      "requestBody": {
+        "bankName": "string (required)",
+        "accountNumber": "string (required)",
+        "ifscCode": "string (required)",
+        "accountHolderName": "string (required)"
+      }
+    },
+    {
+      "url": "/api/payroll/:empId/payslip/:payslipId/download",
+      "method": "GET",
+      "description": "Download payslip PDF",
+      "pathParams": ["empId", "payslipId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/payroll/:empId/salary-breakdown",
+      "method": "GET",
+      "description": "Get salary breakdown",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/payroll/:empId/tax-documents",
+      "method": "GET",
+      "description": "Get tax documents",
+      "pathParams": ["empId"],
+      "queryParams": ["year"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/payroll/:empId/summary",
+      "method": "GET",
+      "description": "Get payroll summary",
+      "pathParams": ["empId"],
+      "queryParams": ["year"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/payroll/:empId/bank-details",
+      "method": "GET",
+      "description": "Get bank details",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/payroll/admin/generate-report",
+      "method": "POST",
+      "description": "Generate payroll report (admin)",
+      "requestBody": {
+        "period": "string (required)",
+        "empIds": "array (optional)",
+        "format": "string (optional, enum: pdf/excel)"
+      }
+    },
+    {
+      "url": "/api/payroll/:empId/salary-structure",
+      "method": "PUT",
+      "description": "Update salary structure",
+      "pathParams": ["empId"],
+      "requestBody": {
+        "basicSalary": "number (optional)",
+        "allowances": "object (optional)",
+        "deductions": "object (optional)"
+      }
+    }
+  ],
+  "performance": [
+    {
+      "url": "/api/performance/:empId/self-evaluation",
+      "method": "POST",
+      "description": "Submit self evaluation",
+      "pathParams": ["empId"],
+      "requestBody": {
+        "period": "string (required)",
+        "goals": "array (required)",
+        "achievements": "array (optional)",
+        "challenges": "string (optional)",
+        "rating": "number (optional)"
+      }
+    },
+    {
+      "url": "/api/performance/:empId/feedback",
+      "method": "GET",
+      "description": "Get performance feedback",
+      "pathParams": ["empId"],
+      "queryParams": ["period", "type"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/performance/:empId/manager-feedback",
+      "method": "POST",
+      "description": "Submit manager feedback",
+      "pathParams": ["empId"],
+      "requestBody": {
+        "managerId": "string (required)",
+        "feedbackData": "object (required)",
+        "rating": "number (optional)",
+        "comments": "string (optional)"
+      }
+    },
+    {
+      "url": "/api/performance/:empId/reviews",
+      "method": "GET",
+      "description": "Get performance reviews",
+      "pathParams": ["empId"],
+      "queryParams": ["year", "limit"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/performance/:empId/goals",
+      "method": "POST",
+      "description": "Create performance goal",
+      "pathParams": ["empId"],
+      "requestBody": {
+        "title": "string (required)",
+        "description": "string (optional)",
+        "targetDate": "string (required, date)",
+        "metrics": "array (optional)"
+      }
+    },
+    {
+      "url": "/api/performance/:empId/goals/:goalId",
+      "method": "PUT",
+      "description": "Update performance goal",
+      "pathParams": ["empId", "goalId"],
+      "requestBody": {
+        "title": "string (optional)",
+        "description": "string (optional)",
+        "targetDate": "string (optional)",
+        "status": "string (optional)",
+        "progress": "number (optional)"
+      }
+    },
+    {
+      "url": "/api/performance/:empId/goals",
+      "method": "GET",
+      "description": "Get performance goals",
+      "pathParams": ["empId"],
+      "queryParams": ["status", "year"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/performance/:empId/metrics",
+      "method": "GET",
+      "description": "Get performance metrics",
+      "pathParams": ["empId"],
+      "queryParams": ["period", "metric"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/performance/:empId/peer-feedback",
+      "method": "GET",
+      "description": "Get peer feedback",
+      "pathParams": ["empId"],
+      "queryParams": ["period"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/performance/:empId/peer-feedback",
+      "method": "POST",
+      "description": "Submit peer feedback",
+      "pathParams": ["empId"],
+      "requestBody": {
+        "reviewerEmpId": "string (required)",
+        "rating": "number (required)",
+        "comments": "string (optional)",
+        "skills": "array (optional)"
+      }
+    },
+    {
+      "url": "/api/performance/:empId/generate-report",
+      "method": "POST",
+      "description": "Generate performance report",
+      "pathParams": ["empId"],
+      "requestBody": {
+        "period": "string (required)",
+        "includeGoals": "boolean (optional)",
+        "includeFeedback": "boolean (optional)"
+      }
+    }
+  ],
+  "profile": [
+    {
+      "url": "/api/profile/:empId",
+      "method": "GET",
+      "description": "Get employee profile",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/profile/:empId",
+      "method": "PUT",
+      "description": "Update employee profile",
+      "pathParams": ["empId"],
+      "requestBody": {
+        "firstName": "string (optional)",
+        "lastName": "string (optional)",
+        "email": "string (optional)",
+        "phone": "string (optional)",
+        "address": "object (optional)"
+      }
+    },
+    {
+      "url": "/api/profile/:empId/photo",
+      "method": "POST",
+      "description": "Upload profile photo",
+      "pathParams": ["empId"],
+      "contentType": "multipart/form-data",
+      "formData": {
+        "photo": "file (required, max 5MB, formats: jpg/png/jpeg/gif)",
+        "empId": "string (required)"
+      }
+    },
+    {
+      "url": "/api/profile/:empId/photo",
+      "method": "GET",
+      "description": "Get profile photo",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/profile/:empId/photo",
+      "method": "DELETE",
+      "description": "Delete profile photo",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/profile/:empId/employment-summary",
+      "method": "GET",
+      "description": "Get employment summary",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/profile/:empId/personal-info",
+      "method": "GET",
+      "description": "Get personal information",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/profile/:empId/personal-info",
+      "method": "PUT",
+      "description": "Update personal information",
+      "pathParams": ["empId"],
+      "requestBody": {
+        "dateOfBirth": "string (optional, date)",
+        "gender": "string (optional)",
+        "maritalStatus": "string (optional)",
+        "nationality": "string (optional)"
+      }
+    },
+    {
+      "url": "/api/profile/:empId/contact-info",
+      "method": "GET",
+      "description": "Get contact information",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/profile/:empId/contact-info",
+      "method": "PUT",
+      "description": "Update contact information",
+      "pathParams": ["empId"],
+      "requestBody": {
+        "email": "string (optional)",
+        "phone": "string (optional)",
+        "alternatePhone": "string (optional)",
+        "address": "object (optional)",
+        "emergencyContact": "object (optional)"
+      }
+    }
+  ],
+  "reimbursement": [
+    {
+      "url": "/api/reimbursement/submit",
+      "method": "POST",
+      "description": "Submit reimbursement request",
+      "contentType": "multipart/form-data (if receipt attached)",
+      "formData": {
+        "empId": "string (required)",
+        "type": "string (required)",
+        "amount": "number (required)",
+        "comment": "string (required)",
+        "expenseDate": "string (required, date)",
+        "receipt": "file (optional)"
+      }
+    },
+    {
+      "url": "/api/reimbursement/history/:empId",
+      "method": "GET",
+      "description": "Get reimbursement history",
+      "pathParams": ["empId"],
+      "queryParams": ["startDate", "endDate", "status"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/reimbursement/status/:empId",
+      "method": "GET",
+      "description": "Get reimbursement status",
+      "pathParams": ["empId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/reimbursement/:reimbursementId/action",
+      "method": "PUT",
+      "description": "Approve/reject reimbursement",
+      "pathParams": ["reimbursementId"],
+      "requestBody": {
+        "action": "string (required, enum: approve/reject)",
+        "remarks": "string (optional)",
+        "managerId": "string (required)"
+      }
+    },
+    {
+      "url": "/api/reimbursement/types",
+      "method": "GET",
+      "description": "Get reimbursement types",
+      "requestBody": null
+    },
+    {
+      "url": "/api/reimbursement/pending/:managerId",
+      "method": "GET",
+      "description": "Get pending reimbursements for manager",
+      "pathParams": ["managerId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/reimbursement/:reimbursementId/cancel",
+      "method": "DELETE",
+      "description": "Cancel reimbursement request",
+      "pathParams": ["reimbursementId"],
+      "requestBody": {
+        "empId": "string (required)"
+      }
+    },
+    {
+      "url": "/api/reimbursement/:reimbursementId",
+      "method": "GET",
+      "description": "Get reimbursement by ID",
+      "pathParams": ["reimbursementId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/reimbursement/:reimbursementId/receipt/:receiptId",
+      "method": "GET",
+      "description": "Download receipt",
+      "pathParams": ["reimbursementId", "receiptId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/reimbursement/summary/:empId",
+      "method": "GET",
+      "description": "Get reimbursement summary",
+      "pathParams": ["empId"],
+      "queryParams": ["year", "month"],
+      "requestBody": null
+    }
+  ],
+  "feedback": [
+    {
+      "url": "/api/feedback/submit",
+      "method": "POST",
+      "description": "Submit feedback",
+      "requestBody": {
+        "empId": "string (required)",
+        "feedbackType": "string (required)",
+        "targetId": "string (required)",
+        "rating": "number (optional)",
+        "comments": "string (required)",
+        "anonymous": "boolean (optional)"
+      }
+    },
+    {
+      "url": "/api/feedback/history/:empId",
+      "method": "GET",
+      "description": "Get feedback history",
+      "pathParams": ["empId"],
+      "queryParams": ["type", "period"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/feedback/received/:empId",
+      "method": "GET",
+      "description": "Get received feedback",
+      "pathParams": ["empId"],
+      "queryParams": ["type", "period"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/feedback/:feedbackId",
+      "method": "GET",
+      "description": "Get feedback by ID",
+      "pathParams": ["feedbackId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/feedback/:feedbackId",
+      "method": "PUT",
+      "description": "Update feedback",
+      "pathParams": ["feedbackId"],
+      "requestBody": {
+        "rating": "number (optional)",
+        "comments": "string (optional)"
+      }
+    },
+    {
+      "url": "/api/feedback/:feedbackId",
+      "method": "DELETE",
+      "description": "Delete feedback",
+      "pathParams": ["feedbackId"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/feedback/types",
+      "method": "GET",
+      "description": "Get feedback types",
+      "requestBody": null
+    },
+    {
+      "url": "/api/feedback/analytics/:empId",
+      "method": "GET",
+      "description": "Get feedback analytics",
+      "pathParams": ["empId"],
+      "queryParams": ["period"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/feedback/:feedbackId/respond",
+      "method": "POST",
+      "description": "Respond to feedback",
+      "pathParams": ["feedbackId"],
+      "requestBody": {
+        "response": "string (required)",
+        "responderId": "string (required)"
+      }
+    },
+    {
+      "url": "/api/feedback/:feedbackId/read",
+      "method": "PUT",
+      "description": "Mark feedback as read",
+      "pathParams": ["feedbackId"],
+      "requestBody": {
+        "empId": "string (required)"
+      }
+    },
+    {
+      "url": "/api/feedback/team/:managerId",
+      "method": "GET",
+      "description": "Get team feedback for manager",
+      "pathParams": ["managerId"],
+      "queryParams": ["period", "type"],
+      "requestBody": null
+    },
+    {
+      "url": "/api/feedback/generate-report",
+      "method": "POST",
+      "description": "Generate feedback report",
+      "requestBody": {
+        "empId": "string (optional)",
+        "period": "string (required)",
+        "type": "string (optional)",
+        "format": "string (optional, enum: pdf/excel)"
+      }
+    }
+  ],
+  "general": [
+    {
+      "url": "/health",
+      "method": "GET",
+      "description": "Health check endpoint",
+      "requestBody": null
+    }
+  ]
+}
