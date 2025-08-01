@@ -3,14 +3,14 @@ const leaveController = require('../controllers/leave.controller');
 const router = express.Router();
 
 router.post('/apply', leaveController.applyLeave);
-router.get('/balance/:empId', leaveController.getLeaveBalance);
-router.get('/history/:empId', leaveController.getLeaveHistory);
+router.get('/balance', leaveController.getLeaveBalance);
+router.get('/history', leaveController.getLeaveHistory);
 router.get('/types', leaveController.getLeaveTypes);
-router.get('/status/:empId', leaveController.getLeaveStatus);
-router.delete('/:leaveId/cancel', leaveController.cancelLeave);
-router.put('/:leaveId/action', leaveController.approveRejectLeave);
-router.get('/pending/:managerId', leaveController.getPendingLeaves);
-router.get('/:leaveId', leaveController.getLeaveById);
-router.put('/:leaveId', leaveController.updateLeave);
+router.get('/status', leaveController.getLeaveStatus);
+router.delete('/cancelLeave', leaveController.cancelLeave);
+router.put('/action', leaveController.approveRejectLeave);
+router.get('/getPendingLeaves', leaveController.getPendingLeaves);
+router.get('/getLeavesById', leaveController.getLeaveById);
+router.put('/updatedLeave', leaveController.updateLeave);
 
 module.exports = router;

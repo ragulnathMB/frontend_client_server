@@ -2,16 +2,16 @@ const express = require('express');
 const performanceController = require('../controllers/performance.controller');
 const router = express.Router();
 
-router.post('/:empId/self-evaluation', performanceController.submitSelfEvaluation);
-router.get('/:empId/feedback', performanceController.getFeedback);
-router.post('/:empId/manager-feedback', performanceController.submitManagerFeedback);
-router.get('/:empId/reviews', performanceController.getPerformanceReviews);
-router.post('/:empId/goals', performanceController.createPerformanceGoal);
-router.put('/:empId/goals/:goalId', performanceController.updatePerformanceGoal);
-router.get('/:empId/goals', performanceController.getPerformanceGoals);
-router.get('/:empId/metrics', performanceController.getPerformanceMetrics);
-router.get('/:empId/peer-feedback', performanceController.getPeerFeedback);
-router.post('/:empId/peer-feedback', performanceController.submitPeerFeedback);
-router.post('/:empId/generate-report', performanceController.generatePerformanceReport);
+router.post('/submitSelfEvaluation', performanceController.submitSelfEvaluation);
+router.get('/getFeedback', performanceController.getFeedback);
+router.post('/submitManagerFeedback', performanceController.submitManagerFeedback);
+router.get('/getPerformanceReviews', performanceController.getPerformanceReviews);
+router.post('/createPerformanceGoal', performanceController.createPerformanceGoal);
+router.put('/updatePerformanceGoal', performanceController.updatePerformanceGoal);
+router.get('/getPerformanceGoals', performanceController.getPerformanceGoals);
+router.get('/getPerformanceMetrics', performanceController.getPerformanceMetrics);
+router.get('/getPeerFeedback', performanceController.getPeerFeedback);
+router.post('/submitPeerFeedback', performanceController.submitPeerFeedback);
+router.post('/generatePerformanceReport', performanceController.generatePerformanceReport);
 
 module.exports = router;

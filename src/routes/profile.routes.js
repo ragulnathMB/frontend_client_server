@@ -5,15 +5,15 @@ const router = express.Router();
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.get('/:empId', profileController.getProfile);
-router.put('/:empId', profileController.updateProfile);
-router.post('/:empId/photo', upload.single('photo'), profileController.uploadPhoto);
-router.get('/:empId/photo', profileController.getPhoto);
-router.delete('/:empId/photo', profileController.deletePhoto);
-router.get('/:empId/employment-summary', profileController.getEmploymentSummary);
-router.get('/:empId/personal-info', profileController.getPersonalInfo);
-router.put('/:empId/personal-info', profileController.updatePersonalInfo);
-router.get('/:empId/contact-info', profileController.getContactInfo);
-router.put('/:empId/contact-info', profileController.updateContactInfo);
+router.get('/getProfile', profileController.getProfile);
+router.put('/updateProfile', profileController.updateProfile);
+router.post('/uploadPhoto', upload.single('photo'), profileController.uploadPhoto);
+router.get('/getPhoto', profileController.getPhoto);
+router.delete('/deletePhoto', profileController.deletePhoto);
+router.get('/getEmploymentSummary', profileController.getEmploymentSummary);
+router.get('/getPersonalInfo', profileController.getPersonalInfo);
+router.put('/updatePersonalInfo', profileController.updatePersonalInfo);
+router.get('/getContactInfo', profileController.getContactInfo);
+router.put('/updateContactInfo', profileController.updateContactInfo);
 
 module.exports = router;
