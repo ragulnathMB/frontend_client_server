@@ -255,3 +255,77 @@ exports.updateDocumentMetadata = async (req, res) => {
         });
     }
 };
+// Fetch all document requests (transactions)
+exports.getDocumentTransactions = async (req, res) => {
+    try {
+        const result = await forwarder.forward({
+            method: 'GET',
+            path: '/api/document/transactions',
+            headers: req.headers, query: req.query,
+            tenantId: req.tenant.id, userId: req.user?.id, tenant: req.tenant
+        });
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId); res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Document transactions fetch error:', error);
+        res.status(500).json({ error: 'Failed to fetch document transactions', requestId: error.requestId });
+    }
+};
+
+// Fetch document request details
+exports.getDocumentRequestDetails = async (req, res) => {
+    try {
+        const { documentReqId } = req.params;
+        const result = await forwarder.forward({
+            method: 'GET',
+            path: `/api/document/${documentReqId}/details`,
+            headers: req.headers, query: req.query,
+            tenantId: req.tenant.id, userId: req.user?.id, tenant: req.tenant
+        });
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId); res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Document request details fetch error:', error);
+        res.status(500).json({ error: 'Failed to fetch document request details', requestId: error.requestId });
+    }
+};
+
+// Submit new document request (DocumentReqID auto)
+exports.submitDocumentRequest = async (req, res) => {
+    try {
+        const result = await forwarder.forward({
+            method: 'POST',
+            path: '/api/document/submit',
+            body: req.body,
+            headers: req.headers, query: req.query,
+            tenantId: req.tenant.id, userId: req.user?.id, tenant: req.tenant
+        });
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId); res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Submit document request error:', error);
+        res.status(500).json({ error: 'Failed to submit document request', requestId: error.requestId });
+    }
+};
+
+// On-behalf submit
+exports.submitDocumentRequestOnBehalf = async (req, res) => {
+    try {
+        const result = await forwarder.forward({
+            method: 'POST',
+            path: '/api/document/submit-on-behalf',
+            body: req.body,
+            headers: req.headers, query: req.query,
+            tenantId: req.tenant.id, userId: req.user?.id, tenant: req.tenant
+        });
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId); res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Submit document on behalf error:', error);
+        res.status(500).json({ error: 'Failed to submit document on behalf', requestId: error.requestId });
+    }
+};

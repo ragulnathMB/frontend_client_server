@@ -6,6 +6,7 @@ router.post('/mark', attendanceController.markAttendance);
 router.get('/status', attendanceController.getDailyStatus);
 router.get('/history', attendanceController.getAttendanceHistory);
 router.get('/summary', attendanceController.getMonthlySummary);
-router.put('/update', attendanceController.updateAttendance); // Admin only
+router.put('/update', attendanceController.updateAttendance); 
+router.get('/getCheckinCheckoutTime',attendanceController.getCheckinCheckoutTime)
 
 module.exports = router;

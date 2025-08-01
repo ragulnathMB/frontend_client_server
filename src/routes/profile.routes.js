@@ -15,5 +15,6 @@ router.get('/getPersonalInfo', profileController.getPersonalInfo);
 router.put('/updatePersonalInfo', profileController.updatePersonalInfo);
 router.get('/getContactInfo', profileController.getContactInfo);
 router.put('/updateContactInfo', profileController.updateContactInfo);
+router.get('/getProfileSummary',profileController.getProfileSummary)
 
 module.exports = router;

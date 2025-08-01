@@ -15,5 +15,9 @@ router.delete('/cancelReibursement', reimbursementController.cancelReimbursement
 router.get('/getReimbursementById', reimbursementController.getReimbursementById);
 router.get('/downloadReimbursementReceipt', reimbursementController.downloadReceipt);
 router.get('/getReimbursementSummary', reimbursementController.getReimbursementSummary);
+router.get('/getReimbursementTransactions',reimbursementController.getReimbursementTransactions)
+router.get('/getReimbursementRequestDetails',reimbursementController.getReimbursementRequestDetails)
+router.post('/submitReimbursementRequest',reimbursementController.submitReimbursementRequest)
+router.post('/submitReimbursementRequestOnBehalf',reimbursementController.submitReimbursementRequestOnBehalf)
 
 module.exports = router;

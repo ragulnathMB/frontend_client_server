@@ -405,3 +405,99 @@ exports.getReimbursementSummary = async (req, res) => {
         });
     }
 };
+// Fetch all reimbursement requests (summary view)
+exports.getReimbursementTransactions = async (req, res) => {
+    try {
+        const result = await forwarder.forward({
+            method: 'GET',
+            path: '/api/reimbursement/transactions',
+            headers: req.headers, query: req.query,
+            tenantId: req.tenant.id, userId: req.user?.id, tenant: req.tenant
+        });
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId); res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Reimbursement transactions fetch error:', error);
+        res.status(500).json({ error: 'Failed to fetch reimbursement transactions', requestId: error.requestId });
+    }
+};
+
+// Fetch reimbursement request details
+exports.getReimbursementRequestDetails = async (req, res) => {
+    try {
+        const { reimbursementReqId } = req.params;
+        const result = await forwarder.forward({
+            method: 'GET',
+            path: `/api/reimbursement/${reimbursementReqId}/details`,
+            headers: req.headers, query: req.query,
+            tenantId: req.tenant.id, userId: req.user?.id, tenant: req.tenant
+        });
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId); res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Reimbursement request details fetch error:', error);
+        res.status(500).json({ error: 'Failed to fetch reimbursement request details', requestId: error.requestId });
+    }
+};
+
+// Submit new reimbursement request (auto id + createdDate)
+exports.submitReimbursementRequest = async (req, res) => {
+    try {
+        let requestBody, requestHeaders = req.headers;
+        if (req.file) {
+            const formData = new FormData();
+            Object.entries(req.body).forEach(([key, value]) => formData.append(key, value));
+            formData.append('attachment', req.file.buffer, {
+                filename: req.file.originalname, contentType: req.file.mimetype
+            });
+            requestBody = formData;
+            requestHeaders = { ...req.headers, ...formData.getHeaders() };
+        } else {
+            requestBody = req.body;
+        }
+        const result = await forwarder.forward({
+            method: 'POST',
+            path: '/api/reimbursement/submit',
+            body: requestBody, headers: requestHeaders, query: req.query,
+            tenantId: req.tenant.id, userId: req.user?.id, tenant: req.tenant
+        });
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId); res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Submit reimbursement error:', error);
+        res.status(500).json({ error: 'Failed to submit reimbursement', requestId: error.requestId });
+    }
+};
+
+// On-behalf submit
+exports.submitReimbursementRequestOnBehalf = async (req, res) => {
+    try {
+        let requestBody, requestHeaders = req.headers;
+        if (req.file) {
+            const formData = new FormData();
+            Object.entries(req.body).forEach(([key, value]) => formData.append(key, value));
+            formData.append('attachment', req.file.buffer, {
+                filename: req.file.originalname, contentType: req.file.mimetype
+            });
+            requestBody = formData;
+            requestHeaders = { ...req.headers, ...formData.getHeaders() };
+        } else {
+            requestBody = req.body;
+        }
+        const result = await forwarder.forward({
+            method: 'POST',
+            path: '/api/reimbursement/submit-on-behalf',
+            body: requestBody, headers: requestHeaders, query: req.query,
+            tenantId: req.tenant.id, userId: req.user?.id, tenant: req.tenant
+        });
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId); res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Submit reimbursement on behalf error:', error);
+        res.status(500).json({ error: 'Failed to submit reimbursement on behalf', requestId: error.requestId });
+    }
+};

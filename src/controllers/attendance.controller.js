@@ -210,3 +210,31 @@ exports.getAttendanceReport = async (req, res) => {
         });
     }
 };
+exports.getCheckinCheckoutTime = async (req, res) => {
+    try {
+        const { empId } = req.params; // Should be the current user's employee ID
+
+        const result = await forwarder.forward({
+            method: 'GET',
+            path: `/api/attendance/checkin-checkout/${empId}`,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+
+        Object.entries(result.headers).forEach(([key, value]) => res.set(key, value));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+
+        // The API Gateway should make sure the response contains: { checkInTime, checkOutTime }
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Checkin/Checkout time fetch error:', error);
+        res.status(500).json({
+            error: 'Failed to fetch checkin/checkout time',
+            requestId: error.requestId
+        });
+    }
+};

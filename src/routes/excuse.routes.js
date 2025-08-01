@@ -14,5 +14,10 @@ router.delete('/cancelExcuse', excuseController.cancelExcuse);
 router.get('/types', excuseController.getExcuseTypes);
 router.get('/getExcuseById', excuseController.getExcuseById);
 router.get('/downloadExcuseAttachment', excuseController.downloadExcuseAttachment);
+router.get('/getExcuseTransactions',excuseController.getExcuseTransactions);
+router.get('/getExcuseRequestDetails',excuseController.getExcuseRequestDetails);
+router.post('/submitExcuse',excuseController.submitExcuse);
+router.post('/submitExcuseOnBehalf',excuseController.submitExcuseOnBehalf)
+
 
 module.exports = router;

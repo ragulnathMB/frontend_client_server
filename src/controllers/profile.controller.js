@@ -402,3 +402,31 @@ exports.updateContactInfo = async (req, res) => {
         });
     }
 };
+exports.getProfileSummary = async (req, res) => {
+    try {
+        const { empId } = req.params; // Should be the current user's employee ID
+
+        const result = await forwarder.forward({
+            method: 'GET',
+            path: `/api/profile/${empId}/summary`,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+
+        Object.entries(result.headers).forEach(([key, value]) => res.set(key, value));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+
+        // The API Gateway should ensure the response contains: name, empId, role, department
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Profile summary fetch error:', error);
+        res.status(500).json({
+            error: 'Failed to fetch profile summary',
+            requestId: error.requestId
+        });
+    }
+};

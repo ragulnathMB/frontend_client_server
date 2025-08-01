@@ -356,3 +356,118 @@ exports.updateLeave = async (req, res) => {
         });
     }
 };
+exports.getLeaveRequestTransactions = async (req, res) => {
+    try {
+        const result = await forwarder.forward({
+            method: 'GET',
+            path: '/api/leave/transactions',
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+        Object.entries(result.headers).forEach(([k,v])=>res.set(k,v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Leave request transactions fetch error:', error);
+        res.status(500).json({ error: 'Failed to fetch leave request transactions', requestId: error.requestId });
+    }
+};
+exports.getLeaveRequestDetails = async (req, res) => {
+    try {
+        const { leaveReqId } = req.params;
+        const result = await forwarder.forward({
+            method: 'GET',
+            path: `/api/leave/${leaveReqId}/details`,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+        Object.entries(result.headers).forEach(([k,v])=>res.set(k,v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Leave request details fetch error:', error);
+        res.status(500).json({ error: 'Failed to fetch leave request details', requestId: error.requestId });
+    }
+};
+exports.submitLeave = async (req, res) => {
+    try {
+        // body: leaveType, startDate, endDate, reason, attachment (maybe multipart), empId, createdDate
+        // leaveReqID should be ignored in input, set by downstream service
+        const result = await forwarder.forward({
+            method: 'POST',
+            path: '/api/leave/submit',
+            body: req.body, // or handle form-data
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+        Object.entries(result.headers).forEach(([k,v])=>res.set(k,v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Submit leave error:', error);
+        res.status(500).json({ error: 'Failed to submit leave', requestId: error.requestId });
+    }
+};
+exports.submitLeaveOnBehalf = async (req, res) => {
+    try {
+        // body: leaveType, startDate, endDate, reason, attachment (maybe multipart), empId, createdDate
+        // leaveReqID should be ignored in input, set by downstream service
+        const result = await forwarder.forward({
+            method: 'POST',
+            path: '/api/leave/submit',
+            body: req.body, // or handle form-data
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+        Object.entries(result.headers).forEach(([k,v])=>res.set(k,v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Submit leave error:', error);
+        res.status(500).json({ error: 'Failed to submit leave', requestId: error.requestId });
+    }
+};
+exports.getPendingLeaveRequests = async (req, res) => {
+    try {
+        const { managerId } = req.params;
+
+        const result = await forwarder.forward({
+            method: 'GET',
+            path: `/api/leave/pending-requests/${managerId}`,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant,
+        });
+
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+
+        // Each pending request should: id, fromDate, toDate, type, forwarded
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Pending leave requests fetch error:', error);
+        res.status(500).json({
+            error: 'Failed to fetch pending leave requests',
+            requestId: error.requestId,
+        });
+    }
+};
