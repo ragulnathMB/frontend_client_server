@@ -19,5 +19,11 @@ router.get('/getReimbursementTransactions',reimbursementController.getReimbursem
 router.get('/getReimbursementRequestDetails',reimbursementController.getReimbursementRequestDetails)
 router.post('/submitReimbursementRequest',reimbursementController.submitReimbursementRequest)
 router.post('/submitReimbursementRequestOnBehalf',reimbursementController.submitReimbursementRequestOnBehalf)
-
+router.patch('/editReibursementRequest',reimbursementController.editReimbursementRequest)
+router.post('/draftSaveReimbursementRequest',reimbursementController.draftSaveReimbursementRequest)
+router.post('/delegateReimbursementRequest',reimbursementController.delegateReimbursementApproval)
+router.patch('/changeReimbursementApproval',reimbursementController.changeReimbursementApproval)
+router.patch('/approveRejectReibursementRequest',reimbursementController.approveRejectReimbursementRequest)
+router.get('/getPendingReimbursementRequestDetails',reimbursementController.getPendingReimbursementRequestDetails)
+router.get('/getPendingReimbursementRequests',reimbursementController.getPendingReimbursementRequests)
 module.exports = router;

@@ -18,6 +18,13 @@ router.get('/getExcuseTransactions',excuseController.getExcuseTransactions);
 router.get('/getExcuseRequestDetails',excuseController.getExcuseRequestDetails);
 router.post('/submitExcuse',excuseController.submitExcuse);
 router.post('/submitExcuseOnBehalf',excuseController.submitExcuseOnBehalf)
-
+router.patch('/editExcuseRequest',excuseController.editExcuseRequest)
+router.post('/draftSaveExcuseRequest',excuseController.draftSaveExcuseRequest)
+router.get('/getPendingExcuseRequests',excuseController.getPendingExcuseRequests)
+router.get('/getPendingExcuseRequests',excuseController.getPendingExcuseRequests)
+router.get('/getPendingExcuseRequestDetails',excuseController.getPendingExcuseRequestDetails)
+router.patch('/approveRejectExcuseRequest',excuseController.approveRejectExcuseRequest)
+router.patch('/changeExcuseApproval',excuseController.changeExcuseApproval)
+router.post('/delegateExcuseApproval',excuseController.delegateExcuseApproval)
 
 module.exports = router;

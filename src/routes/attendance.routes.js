@@ -8,5 +8,6 @@ router.get('/history', attendanceController.getAttendanceHistory);
 router.get('/summary', attendanceController.getMonthlySummary);
 router.put('/update', attendanceController.updateAttendance); 
 router.get('/getCheckinCheckoutTime',attendanceController.getCheckinCheckoutTime)
+router.get('/getCheckinCheckoutHistory',attendanceController.getCheckinCheckoutHistory)
 
 module.exports = router;

@@ -501,3 +501,222 @@ exports.submitReimbursementRequestOnBehalf = async (req, res) => {
         res.status(500).json({ error: 'Failed to submit reimbursement on behalf', requestId: error.requestId });
     }
 };
+
+exports.editReimbursementRequest = async (req, res) => {
+  try {
+    const { reimbursementReqId } = req.params;
+    let requestBody = req.body;
+    let requestHeaders = req.headers;
+
+    // If attachment present, construct FormData
+    if (req.file) {
+      const formData = new FormData();
+      // Append all other fields
+      Object.entries(req.body).forEach(([key, value]) => formData.append(key, value));
+      formData.append('attachment', req.file.buffer, {
+        filename: req.file.originalname,
+        contentType: req.file.mimetype,
+      });
+      requestBody = formData;
+      requestHeaders = { ...req.headers, ...formData.getHeaders() };
+    }
+
+    const result = await forwarder.forward({
+      method: 'PATCH',
+      path: `/reimbursement/${reimbursementReqId}`,
+      body: requestBody,
+      headers: requestHeaders,
+      query: req.query,
+      tenantId: req.tenant.id,
+      userId: req.user?.id,
+      tenant: req.tenant,
+    });
+
+    // Forward response headers
+    Object.entries(result.headers).forEach(([key, value]) => res.set(key, value));
+    res.set('X-Request-ID', result.requestId);
+    res.set('X-Response-Time', `${result.duration}ms`);
+
+    return res.status(result.status).json(result.data);
+  } catch (error) {
+    logger.error('Reimbursement request edit error:', error);
+    res.status(500).json({
+      error: 'Failed to edit reimbursement request',
+      requestId: error.requestId,
+    });
+  }
+};
+
+/**
+ * Save a reimbursement request as draft
+ * POST /reimbursement/draft-save
+ */
+exports.draftSaveReimbursementRequest = async (req, res) => {
+  try {
+    let requestBody = req.body;
+    let requestHeaders = req.headers;
+
+    // If attachment present, construct FormData
+    if (req.file) {
+      const formData = new FormData();
+      Object.entries(req.body).forEach(([key, value]) => formData.append(key, value));
+      formData.append('attachment', req.file.buffer, {
+        filename: req.file.originalname,
+        contentType: req.file.mimetype,
+      });
+      requestBody = formData;
+      requestHeaders = { ...req.headers, ...formData.getHeaders() };
+    }
+
+    const result = await forwarder.forward({
+      method: 'POST',
+      path: '/reimbursement/draft-save',
+      body: requestBody,
+      headers: requestHeaders,
+      query: req.query,
+      tenantId: req.tenant.id,
+      userId: req.user?.id,
+      tenant: req.tenant,
+    });
+
+    // Forward response headers
+    Object.entries(result.headers).forEach(([key, value]) => res.set(key, value));
+    res.set('X-Request-ID', result.requestId);
+    res.set('X-Response-Time', `${result.duration}ms`);
+
+    return res.status(result.status).json(result.data);
+  } catch (error) {
+    logger.error('Reimbursement request draft save error:', error);
+    res.status(500).json({
+      error: 'Failed to save reimbursement request draft',
+      requestId: error.requestId,
+    });
+  }
+};
+exports.delegateReimbursementApproval = async (req, res) => {
+    try {
+        const { reqID } = req.params;
+        const { empID: delegateEmpId, comment } = req.body;
+        const body = { empID: delegateEmpId, comment };
+
+        const result = await forwarder.forward({
+            method: 'POST',
+            path: `/api/reimbursement/${reqID}/delegate`,
+            body,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+        Object.entries(result.headers).forEach(([k,v]) => res.set(k,v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Delegate reimbursement approval error:', error);
+        res.status(500).json({ error: 'Failed to delegate reimbursement approval', requestId: error.requestId });
+    }
+};
+exports.changeReimbursementApproval = async (req, res) => {
+    try {
+        const { reqID } = req.params;
+        const { comments, empID } = req.body;
+        const body = { comments, empID };
+
+        const result = await forwarder.forward({
+            method: 'PATCH',
+            path: `/api/reimbursement/${reqID}/change-request`,
+            body,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+        Object.entries(result.headers).forEach(([k,v]) => res.set(k,v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Change reimbursement approval error:', error);
+        res.status(500).json({ error: 'Failed to request change on reimbursement approval', requestId: error.requestId });
+    }
+};
+exports.approveRejectReimbursementRequest = async (req, res) => {
+    try {
+        const { reqID } = req.params;
+        const { comments, empID } = req.body;
+        const body = { comments, empID };
+
+        const result = await forwarder.forward({
+            method: 'PATCH',
+            path: `/api/reimbursement/${reqID}/approve-reject`,
+            body,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+        Object.entries(result.headers).forEach(([k,v]) => res.set(k,v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Approve/Reject reimbursement request error:', error);
+        res.status(500).json({ error: 'Failed to process reimbursement approval/rejection', requestId: error.requestId });
+    }
+};
+
+exports.getPendingReimbursementRequestDetails = async (req, res) => {
+    try {
+        const { reimbursementReqId } = req.params;
+
+        const result = await forwarder.forward({
+            method: 'GET',
+            path: `/api/reimbursement/${reimbursementReqId}/details`,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+
+        // Response includes id, date, createdDate, type, status, description, attachment, forwardedBy (if any)
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+
+        res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Pending reimbursement request details fetch error:', error);
+        res.status(500).json({ error: 'Failed to fetch pending reimbursement request details', requestId: error.requestId });
+    }
+};
+
+exports.getPendingReimbursementRequests = async (req, res) => {
+    try {
+        const { managerId } = req.params;
+
+        const result = await forwarder.forward({
+            method: 'GET',
+            path: `/api/reimbursement/pending/${managerId}`,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+
+        // Response includes id, date, type, forwardedBy (if any)
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+
+        res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Pending reimbursement requests fetch error:', error);
+        res.status(500).json({ error: 'Failed to fetch pending reimbursement requests', requestId: error.requestId });
+    }
+};

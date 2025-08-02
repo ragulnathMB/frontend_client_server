@@ -329,3 +329,231 @@ exports.submitDocumentRequestOnBehalf = async (req, res) => {
         res.status(500).json({ error: 'Failed to submit document on behalf', requestId: error.requestId });
     }
 };
+
+exports.editDocumentRequest = async (req, res) => {
+  try {
+    const { documentReqId } = req.params;
+    let requestBody = req.body;
+    let requestHeaders = req.headers;
+
+    if (req.file) {
+      // Handle file upload with FormData
+      const formData = new FormData();
+      // Append all body fields
+      Object.entries(req.body).forEach(([key, value]) => formData.append(key, value));
+      formData.append('attachment', req.file.buffer, {
+        filename: req.file.originalname,
+        contentType: req.file.mimetype,
+      });
+      requestBody = formData;
+      requestHeaders = {
+        ...req.headers,
+        ...formData.getHeaders(),
+      };
+    }
+
+    const result = await forwarder.forward({
+      method: 'PATCH',
+      path: `/document/${documentReqId}`,
+      body: requestBody,
+      headers: requestHeaders,
+      query: req.query,
+      tenantId: req.tenant.id,
+      userId: req.user?.id,
+      tenant: req.tenant,
+    });
+
+    // Set forwarded headers and timing
+    Object.entries(result.headers).forEach(([key, val]) => res.set(key, val));
+    res.set('X-Request-ID', result.requestId);
+    res.set('X-Response-Time', `${result.duration}ms`);
+
+    return res.status(result.status).json(result.data);
+  } catch (error) {
+    logger.error('Edit document request error:', error);
+    res.status(500).json({
+      error: 'Failed to edit document request',
+      requestId: error.requestId,
+    });
+  }
+};
+
+/**
+ * Save a document request as draft
+ * POST /document/draft-save
+ */
+exports.draftSaveDocumentRequest = async (req, res) => {
+  try {
+    let requestBody = req.body;
+    let requestHeaders = req.headers;
+
+    if (req.file) {
+      // Handle file upload with FormData
+      const formData = new FormData();
+      // Append all body fields
+      Object.entries(req.body).forEach(([key, value]) => formData.append(key, value));
+      formData.append('attachment', req.file.buffer, {
+        filename: req.file.originalname,
+        contentType: req.file.mimetype,
+      });
+      requestBody = formData;
+      requestHeaders = {
+        ...req.headers,
+        ...formData.getHeaders(),
+      };
+    }
+
+    const result = await forwarder.forward({
+      method: 'POST',
+      path: `/document/draft-save`,
+      body: requestBody,
+      headers: requestHeaders,
+      query: req.query,
+      tenantId: req.tenant.id,
+      userId: req.user?.id,
+      tenant: req.tenant,
+    });
+
+    // Set forwarded headers and timing
+    Object.entries(result.headers).forEach(([key, val]) => res.set(key, val));
+    res.set('X-Request-ID', result.requestId);
+    res.set('X-Response-Time', `${result.duration}ms`);
+
+    return res.status(result.status).json(result.data);
+  } catch (error) {
+    logger.error('Save draft document request error:', error);
+    res.status(500).json({
+      error: 'Failed to save draft document request',
+      requestId: error.requestId,
+    });
+  }
+};
+exports.delegateDocumentApproval = async (req, res) => {
+    try {
+        const { reqID } = req.params;
+        const { empID: delegateEmpId, comment } = req.body;
+        const body = { empID: delegateEmpId, comment };
+
+        const result = await forwarder.forward({
+            method: 'POST',
+            path: `/api/document/${reqID}/delegate`,
+            body,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant,
+        });
+        Object.entries(result.headers).forEach(([k,v]) => res.set(k,v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Delegate document approval error:', error);
+        res.status(500).json({ error: 'Failed to delegate document approval', requestId: error.requestId });
+    }
+};
+exports.changeDocumentApproval = async (req, res) => {
+    try {
+        const { reqID } = req.params;
+        const { comments, empID } = req.body;
+        const body = { comments, empID };
+
+        const result = await forwarder.forward({
+            method: 'PATCH',
+            path: `/api/document/${reqID}/change-request`,
+            body,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant,
+        });
+        Object.entries(result.headers).forEach(([k,v]) => res.set(k,v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Change document approval error:', error);
+        res.status(500).json({ error: 'Failed to request change on document approval', requestId: error.requestId });
+    }
+};
+exports.approveRejectDocumentRequest = async (req, res) => {
+    try {
+        const { reqID } = req.params;
+        const { comments, empID } = req.body;
+        const body = { comments, empID };
+
+        const result = await forwarder.forward({
+            method: 'PATCH',
+            path: `/api/document/${reqID}/approve-reject`,
+            body,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant,
+        });
+        Object.entries(result.headers).forEach(([k,v]) => res.set(k,v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Approve/Reject document request error:', error);
+        res.status(500).json({ error: 'Failed to process document approval/rejection', requestId: error.requestId });
+    }
+};
+
+exports.getPendingDocumentRequests = async (req, res) => {
+    try {
+        const { managerId } = req.params; // Manager's employee ID
+
+        const result = await forwarder.forward({
+            method: 'GET',
+            path: `/api/document/pending/${managerId}`,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+
+        // Response contains array of objects with: id, date, type, forwardedBy (optional)
+
+        Object.entries(result.headers).forEach(([k,v]) => res.set(k,v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Get pending document requests error:', error);
+        res.status(500).json({ error: 'Failed to fetch pending document requests', requestId: error.requestId });
+    }
+};
+
+exports.getPendingDocumentRequestDetails = async (req, res) => {
+    try {
+        const { documentReqId } = req.params;
+
+        const result = await forwarder.forward({
+            method: 'GET',
+            path: `/api/document/${documentReqId}/details`,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+
+        // Response includes: id, createdDate, type, status, description, forwardedBy (if applicable)
+
+        Object.entries(result.headers).forEach(([k,v]) => res.set(k,v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Get pending document request details error:', error);
+        res.status(500).json({ error: 'Failed to fetch pending document request details', requestId: error.requestId });
+    }
+};

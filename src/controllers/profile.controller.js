@@ -430,3 +430,37 @@ exports.getProfileSummary = async (req, res) => {
         });
     }
 };
+
+exports.getCalendar = async (req, res) => {
+  try {
+    const { month, year } = req.body;
+
+    if (!month || !year) {
+      return res.status(400).json({ error: 'month and year are required' });
+    }
+
+    const result = await forward({
+      method: 'POST',
+      path: '/calendar',
+      body: { month, year },
+      headers: req.headers,
+      tenantId: req.tenant.id,
+      userId: req.user?.id,
+      tenant: req.tenant,
+    });
+
+    // Response contains array of events (leaves, excuses, trips) with dates
+
+    Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+    res.set('X-Request-ID', result.requestId);
+    res.set('X-Response-Time', `${result.duration}ms`);
+
+    return res.status(result.status).json(result.data);
+  } catch (error) {
+    logger.error('Failed to fetch calendar:', error);
+    res.status(500).json({
+      error: 'Failed to fetch calendar',
+      requestId: error.requestId,
+    });
+  }
+};

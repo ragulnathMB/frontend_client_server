@@ -238,3 +238,33 @@ exports.getCheckinCheckoutTime = async (req, res) => {
         });
     }
 };
+
+exports.getCheckinCheckoutHistory = async (req, res) => {
+  try {
+    const { userId } = req.params; // Employee Id for whom to fetch records
+
+    const result = await forward({
+      method: 'GET',
+      path: `/attendance/checkin-checkout/${userId}`,
+      headers: req.headers,
+      query: req.query,
+      tenantId: req.tenant.id,
+      userId: req.user?.id,
+      tenant: req.tenant,
+    });
+
+    // Expected response: [{ date, checkInTime, checkOutTime }, ...]
+
+    Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+    res.set('X-Request-ID', result.requestId);
+    res.set('X-Response-Time', `${result.duration}ms`);
+
+    return res.status(result.status).json(result.data);
+  } catch (error) {
+    logger.error('Failed to fetch checkin-checkout history:', error);
+    res.status(500).json({
+      error: 'Failed to fetch checkin-checkout history',
+      requestId: error.requestId,
+    });
+  }
+};

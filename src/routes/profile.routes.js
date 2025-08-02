@@ -16,5 +16,6 @@ router.put('/updatePersonalInfo', profileController.updatePersonalInfo);
 router.get('/getContactInfo', profileController.getContactInfo);
 router.put('/updateContactInfo', profileController.updateContactInfo);
 router.get('/getProfileSummary',profileController.getProfileSummary)
+router.get('/getCalendar',profileController.getCalendar)
 
 module.exports = router;

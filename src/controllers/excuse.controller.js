@@ -467,3 +467,240 @@ exports.submitExcuseOnBehalf = async (req, res) => {
         res.status(500).json({ error: 'Failed to submit excuse on behalf', requestId: error.requestId });
     }
 };
+exports.editExcuseRequest = async (req, res) => {
+    try {
+        const { excuseReqId } = req.params;
+        let requestBody = req.body;
+        let requestHeaders = req.headers;
+
+        // Handle file attachment if present
+        if (req.file) {
+            const formData = new FormData();
+            // Append all other body fields
+            Object.entries(req.body).forEach(([key, value]) => formData.append(key, value));
+            formData.append('attachment', req.file.buffer, {
+                filename: req.file.originalname,
+                contentType: req.file.mimetype
+            });
+            requestBody = formData;
+            requestHeaders = {
+                ...req.headers,
+                ...formData.getHeaders()
+            };
+        }
+
+        const result = await forwarder.forward({
+            method: 'PATCH',
+            path: `/excuse/${excuseReqId}`,
+            body: requestBody,
+            headers: requestHeaders,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+
+        // Set response headers from API Gateway
+        Object.entries(result.headers).forEach(([key, value]) => res.set(key, value));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Edit excuse request error:', error);
+        res.status(500).json({
+            error: 'Failed to edit excuse request',
+            requestId: error.requestId,
+        });
+    }
+};
+
+/**
+ * Save an excuse request as draft
+ * POST /excuse/draft-save
+ */
+exports.draftSaveExcuseRequest = async (req, res) => {
+    try {
+        let requestBody = req.body;
+        let requestHeaders = req.headers;
+
+        // Handle file attachment if present
+        if (req.file) {
+            const formData = new FormData();
+            // Append all other body fields
+            Object.entries(req.body).forEach(([key, value]) => formData.append(key, value));
+            formData.append('attachment', req.file.buffer, {
+                filename: req.file.originalname,
+                contentType: req.file.mimetype
+            });
+            requestBody = formData;
+            requestHeaders = {
+                ...req.headers,
+                ...formData.getHeaders()
+            };
+        }
+
+        const result = await forwarder.forward({
+            method: 'POST',
+            path: `/excuse/draft-save`,
+            body: requestBody,
+            headers: requestHeaders,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant,
+        });
+
+        // Set response headers from API Gateway
+        Object.entries(result.headers).forEach(([key, value]) => res.set(key, value));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Save draft excuse request error:', error);
+        res.status(500).json({
+            error: 'Failed to save excuse request draft',
+            requestId: error.requestId,
+        });
+    }
+}
+
+exports.getPendingExcuseRequests = async (req, res) => {
+    try {
+        const { managerId } = req.params;
+
+        const result = await forwarder.forward({
+            method: 'GET',
+            path: `/api/excuse/pending/${managerId}`,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+
+        // Response includes id, date, fromTime, toTime, type, forwardedBy (if any)
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+
+        res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Pending excuse requests fetch error:', error);
+        res.status(500).json({ error: 'Failed to fetch pending excuse requests', requestId: error.requestId });
+    }
+};
+
+exports.getPendingExcuseRequestDetails = async (req, res) => {
+    try {
+        const { excuseReqId } = req.params;
+
+        const result = await forwarder.forward({
+            method: 'GET',
+            path: `/api/excuse/${excuseReqId}/details`,
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+
+        // Response includes id, date, fromTime, toTime, createdDate, type, description, attachment, forwardedBy (if any)
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+
+        res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Pending excuse request details fetch error:', error);
+        res.status(500).json({ error: 'Failed to fetch pending excuse request details', requestId: error.requestId });
+    }
+};
+exports.approveRejectExcuseRequest = async (req, res) => {
+    try {
+        const { reqID } = req.params;
+        const { comments, empID } = req.body;
+
+        const result = await forwarder.forward({
+            method: 'PATCH',
+            path: `/api/excuse/${reqID}/approve-reject`,
+            body: { comments, empID },
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant
+        });
+
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+
+        res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Approve/Reject excuse request error:', error);
+        res.status(500).json({ error: 'Failed to process excuse approval/rejection', requestId: error.requestId });
+    }
+};
+
+
+exports.changeExcuseApproval = async (req, res) => {
+    try {
+        const { reqID } = req.params;  // Excuse request ID
+        const { comments, empID } = req.body;
+
+        const result = await forwarder.forward({
+            method: 'PATCH',
+            path: `/api/excuse/${reqID}/change-request`,
+            body: { comments, empID },
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant,
+        });
+
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Change excuse approval error:', error);
+        res.status(500).json({
+            error: 'Failed to request change on excuse approval',
+            requestId: error.requestId,
+        });
+    }
+};
+
+exports.delegateExcuseApproval = async (req, res) => {
+    try {
+        const { reqID } = req.params;  // Excuse request ID
+        const { empID: delegateEmpId, comment } = req.body;
+
+        const result = await forwarder.forward({
+            method: 'POST',
+            path: `/api/excuse/${reqID}/delegate`,
+            body: { empID: delegateEmpId, comment },
+            headers: req.headers,
+            query: req.query,
+            tenantId: req.tenant.id,
+            userId: req.user?.id,
+            tenant: req.tenant,
+        });
+
+        Object.entries(result.headers).forEach(([k, v]) => res.set(k, v));
+        res.set('X-Request-ID', result.requestId);
+        res.set('X-Response-Time', `${result.duration}ms`);
+
+        return res.status(result.status).json(result.data);
+    } catch (error) {
+        logger.error('Delegate excuse approval error:', error);
+        res.status(500).json({
+            error: 'Failed to delegate excuse approval',
+            requestId: error.requestId,
+        });
+    }
+};
