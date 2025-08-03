@@ -3,7 +3,7 @@ const payrollController = require('../controllers/payroll.controller');
 const router = express.Router();
 
 router.get('/payslip', payrollController.getPayslip);
-router.get('/history', payrollController.getPayslipHistory);
+router.get('/getPayslipHistory', payrollController.getPayslipHistory);
 router.put('/updateBankDetails', payrollController.updateBankDetails);
 router.get('/payslipDownload', payrollController.downloadPayslip);
 router.get('/getSalaryBreakdown', payrollController.getSalaryBreakdown);

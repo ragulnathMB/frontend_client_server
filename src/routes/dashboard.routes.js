@@ -1,18 +1,27 @@
 const express = require('express');
-const feedbackController = require('../controllers/feedback.controller');
 const router = express.Router();
+const dashboardController = require('../controllers/dashboard.controller');
 
-router.post('/submit', feedbackController.submitFeedback);
-router.get('/history', feedbackController.getFeedbackHistory);
-router.get('/received', feedbackController.getReceivedFeedback);
-router.get('/getFeedbackById', feedbackController.getFeedbackById);
-router.put('/updateFeedbackById', feedbackController.updateFeedback);
-router.delete('/deleteFeedback', feedbackController.deleteFeedback);
-router.get('/getFeedbackTypes', feedbackController.getFeedbackTypes);
-router.get('/getFeedbackAnalytics', feedbackController.getFeedbackAnalytics);
-router.post('/respondToFeedbackById', feedbackController.respondToFeedback);
-router.put('/markFeedbackAsRead', feedbackController.markFeedbackAsRead);
-router.get('/getTeamFeedback', feedbackController.getTeamFeedback);
-router.post('/generateFeedbackReport', feedbackController.generateFeedbackReport);
+router.get('/getDashboardData', dashboardController.getDashboardData);
+
+router.get('/getEmployeeDashboard', dashboardController.getEmployeeDashboard);
+
+router.get('/getManagerDashboard', dashboardController.getManagerDashboard);
+
+router.get('/getAttendanceStats', dashboardController.getAttendanceStats);
+
+router.get('/getRecentActivities', dashboardController.getRecentActivities);
+
+router.get('/getPendingApprovals', dashboardController.getPendingApprovals);
+
+router.get('/getQuickStats', dashboardController.getQuickStats);
+
+router.get('/getTeamOverview', dashboardController.getTeamOverview);
+
+router.get('/getNotificationSummary', dashboardController.getNotificationSummary);
+
+router.post('/refreshDashboard', dashboardController.refreshDashboard);
+
+router.put('/updateDashboardPreferences', dashboardController.updateDashboardPreferences);
 
 module.exports = router;

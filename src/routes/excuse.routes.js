@@ -6,12 +6,12 @@ const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/submit', upload.single('attachment'), excuseController.submitExcuse);
-router.get('/history', excuseController.getExcuseHistory);
-router.get('/status', excuseController.getExcuseStatus);
-router.put('/action', excuseController.approveRejectExcuse);
+router.get('/getExcuseHistory', excuseController.getExcuseHistory);
+router.get('/getExcuseStatus', excuseController.getExcuseStatus);
+router.put('/approveRejectExcuse', excuseController.approveRejectExcuse);
 router.get('/getPendingExcuses', excuseController.getPendingExcuses);
 router.delete('/cancelExcuse', excuseController.cancelExcuse);
-router.get('/types', excuseController.getExcuseTypes);
+router.get('/getExcuseTypes', excuseController.getExcuseTypes);
 router.get('/getExcuseById', excuseController.getExcuseById);
 router.get('/downloadExcuseAttachment', excuseController.downloadExcuseAttachment);
 router.get('/getExcuseTransactions',excuseController.getExcuseTransactions);
